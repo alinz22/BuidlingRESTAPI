@@ -1,5 +1,5 @@
 const express = require("express");
-const { body } = express("express-validation/check");
+const { check, body } = require("express-validator");
 
 const feedControllers = require("../controllers/feed");
 
