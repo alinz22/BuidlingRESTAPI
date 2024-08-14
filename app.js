@@ -34,8 +34,8 @@ const fileFilter = (req, file, cb) => {
   }
 };
 
-// app.use(bodyParser.urlencoded());
-app.use(bodyParser.json());
+// app.use(bodyParser.urlencoded()); // x-www-form-urlencoded <form>
+app.use(bodyParser.json()); // application/json
 app.use(
   multer({ storage: fileStorage, fileFilter: fileFilter }).single("image")
 );
@@ -45,9 +45,9 @@ app.use((req, res, next) => {
   res.setHeader("Access-Control-Allow-Origin", "*");
   res.setHeader(
     "Access-Control-Allow-Methods",
-    "GET, POST, PUT, DELETE, PATCH,"
+    "OPTIONS, GET, POST, PUT, PATCH, DELETE"
   );
-  res.setHeader("Access-Control-Allow-Headers", "Content-Type, Authorization,");
+  res.setHeader("Access-Control-Allow-Headers", "Content-Type, Authorization");
   next();
 });
 
@@ -55,10 +55,11 @@ app.use("/feed", feedRoutes);
 app.use("/auth", authRoutes);
 
 app.use((error, req, res, next) => {
-  console.error(error);
+  console.log(error);
   const status = error.statusCode || 500;
   const message = error.message;
-  res.status(status).json({ message: message });
+  const data = error.data;
+  res.status(status).json({ message: message, data: data });
 });
 
 mongoose
@@ -66,6 +67,4 @@ mongoose
   .then((result) => {
     app.listen(8080);
   })
-  .catch((err) => {
-    console.error(err);
-  });
+  .catch((err) => console.log(err));
